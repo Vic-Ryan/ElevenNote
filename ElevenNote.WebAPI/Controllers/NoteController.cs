@@ -26,6 +26,13 @@ namespace ElevenNote.WebAPI.Controllers
             return Ok(notes);
         }
 
+        public IHttpActionResult Get(int id)
+        {
+            NoteServices noteService = CreateNoteService();
+            var note = noteService.GetNoteById(id);
+            return Ok(note);
+        }
+
         public IHttpActionResult Post(NoteCreate note)
         {
             if (!ModelState.IsValid)
@@ -39,11 +46,17 @@ namespace ElevenNote.WebAPI.Controllers
             return Ok();
         }
 
-        public IHttpActionResult Get(int id)
+        public IHttpActionResult Put(NoteEdit note)
         {
-            NoteServices noteService = CreateNoteService();
-            var note = noteService.GetNoteById(id);
-            return Ok(note);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var service = CreateNoteService();
+
+            if (!service.UpdateNote(note))
+                return InternalServerError();
+
+            return Ok();
         }
     }
 }
